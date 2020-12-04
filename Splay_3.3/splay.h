@@ -4,24 +4,19 @@
 #include <sstream>
 #include <iostream>
 
-template <class T> class SplayTree;
-
 using namespace std;
 
+template <class T> class SplayTree;
+// Se crea la clase Node (El BST)
 template <class T>
 class Node {
-
 private:
-
   T value;
   Node *left, *right, *parent;
-
   Node<T>* succesor();
   Node<T>* rot_right(Node<T>*);
   Node<T>* rot_left(Node<T>*);
-
 public:
-
   Node (T);
   Node (T, Node<T>*, Node<T>*, Node<T>*);
   Node<T>* add(T);
@@ -32,19 +27,20 @@ public:
   void print_tree(stringstream&) const;
   void preorder(stringstream&) const;
   Node<T>* splay(Node<T>*, Node<T>*);
-
   friend class SplayTree<T>;
 };
 
+//Constructor por default de clase Node
 template <class T>
 Node<T>::Node(T val) : value(val), left(0), right(0), parent(0) {}
 
+//Constructor de la clase Node
 template <class T>
-Node<T>::Node(T val, Node<T> *le, Node<T> *ri, Node<T> *p) : value(val), left(le), right(ri), parent(p) {}
+Node<T>::Node(T val, Node<T> *l, Node<T> *r, Node<T> *p) : value(val), left(l), right(r), parent(p) {}
 
+//AGREGAR NODO
 template <class T>
 Node<T>* Node<T>::add(T val) {
-
 if (val < value) {
   if (left != 0){
     return left->add(val);
@@ -65,33 +61,30 @@ if (val < value) {
   }
 }
 
+//SUCESOR
 template <class T>
 Node<T>* Node<T>::succesor(){
-	Node<T> *le, *ri;
-
-	le = left;
-	ri = right;
-
+	Node<T> *l, *r;
+	l = left;
+	r = right;
 	if (right == 0){
 		if (left != 0){
 			left = 0;
 		}
-	if(le)
-		le->parent = 0;
-	return le;
+	if(l)
+		l->parent = 0;
+	return l;
 	}
-
 	if (right->left == 0){
 		right = right->right;
 		if(right)
 			right->parent = parent;
-		if(ri){
-			ri->right = 0;
-			ri->parent = 0;
+		if(r){
+			r->right = 0;
+			r->parent = 0;
 		}
-		return ri;
+		return r;
 	}
-
 	Node<T> *p, *c;
 	p = right;
 	c = right->left;
@@ -106,6 +99,7 @@ Node<T>* Node<T>::succesor(){
 	return c;
 }
 
+//BORRAR
 template <class T>
 Node<T>* Node<T>::remove(T val) {
 Node<T> *succ, *old;
@@ -155,6 +149,7 @@ if (val < value) {
   return 0;
 }
 
+//ROTAR DERECHA
 template <class T>
 Node<T>* Node<T>::rot_right(Node<T>* x){
   Node<T> *y = x->left;
@@ -173,6 +168,7 @@ Node<T>* Node<T>::rot_right(Node<T>* x){
   return y;
 }
 
+//ROTAR IZQUIERDA
 template <class T>
 Node<T>* Node<T>::rot_left(Node<T>* x){
   Node<T> *y = x->right;
@@ -191,6 +187,7 @@ Node<T>* Node<T>::rot_left(Node<T>* x){
   return y;
 }
 
+//BUSCAR UN NODO
 template <class T>
 Node<T>* Node<T>::find(T val) {
   if (val == value){
@@ -244,7 +241,7 @@ Node<T>* Node<T>::splay(Node<T>* root,Node<T>* x) {
     return x;
 }
 
-
+//IMPRIMIR RECURSIVAMENTE EL ARBOL
 template <class T>
 void Node<T>::inorder(stringstream &aux) const {
   if (left != 0) {
@@ -258,6 +255,8 @@ void Node<T>::inorder(stringstream &aux) const {
     right->inorder(aux);
   }
 }
+
+//IMPRIME ARBOL RECURSIVAMENTE
 template <class T>
 void Node<T>::print_tree(stringstream &aux) const {
   if (parent != 0) {
@@ -279,6 +278,7 @@ void Node<T>::print_tree(stringstream &aux) const {
   }
 }
 
+//IMPRIME ARBOL RECURSIVAMENTE
 template <class T>
 void Node<T>::preorder(stringstream &aux) const {
 	aux << value;
@@ -292,12 +292,12 @@ void Node<T>::preorder(stringstream &aux) const {
 	}
 }
 
+//SE CREA CLASE SPLAYTREE
 template <class T>
 class SplayTree {
-
 private:
   Node<T> *root;
-
+  int sze;
 public:
   SplayTree();
   bool empty() const;
@@ -310,14 +310,17 @@ public:
   int size();
 };
 
+//CONSTRUCTOR POR DEFAULT
 template <class T>
 SplayTree<T>::SplayTree() : root(0) {}
 
+//Función que regresa si el arbol esta vacío
 template <class T>
 bool SplayTree<T>::empty() const {
   return (root == 0);
 }
 
+//AGREGAR NODO
 template <class T>
 void SplayTree<T>::add(T val) {
   if ( root != 0) {
@@ -327,8 +330,10 @@ void SplayTree<T>::add(T val) {
   else {
     root = new Node<T>(val);
   }
+  sze++;
 }
 
+//BORRAR UN NODO
 template <class T>
 void SplayTree<T>::remove(T val) {
   if (root != 0) {
@@ -350,8 +355,10 @@ void SplayTree<T>::remove(T val) {
       root = root->splay(root,p);
     }
   }
+  sze--;
 }
 
+//ENCONTRAR UN NODO RECURSIVAMENTE
 template <class T>
 bool SplayTree<T>::find(T val) {
   if (root != 0) {
@@ -363,10 +370,10 @@ bool SplayTree<T>::find(T val) {
   }
 }
 
+//IMPRIME ARBOL
 template <class T>
 string SplayTree<T>::inorder() const {
   stringstream aux;
-
   aux << "[";
   if (!empty()) {
     root->inorder(aux);
@@ -375,10 +382,10 @@ string SplayTree<T>::inorder() const {
   return aux.str();
 }
 
+//IMPRIME ARBOL
 template <class T>
 string SplayTree<T>::print_tree() const {
   stringstream aux;
-
   aux << "\n ================================ ";
   if (!empty()) {
     root->print_tree(aux);
@@ -387,10 +394,10 @@ string SplayTree<T>::print_tree() const {
   return aux.str();
 }
 
+//IMPRIME ARBOL
 template <class T>
 string SplayTree<T>::preorder() const {
   stringstream aux;
-
   aux << "[";
   if (!empty()) {
     root->preorder(aux);
@@ -399,9 +406,10 @@ string SplayTree<T>::preorder() const {
   return aux.str();
 }
 
+//REGRESA EL TAMAÑO DEL ARBOL
 template <class T>
 int SplayTree<T>::size(){
-	return 0;
+	return sze;
 }
 
 #endif
