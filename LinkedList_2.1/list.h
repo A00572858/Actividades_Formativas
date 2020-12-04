@@ -29,17 +29,18 @@ private:
 public:
     string toString() const;
     List();
-    void add(int);
-    int find(int);
-    void update(int,int);
-    int remove(int);
+    void add(T);
+    T find(T);
+    T remove_first();
+    void update(T,T);
+    T remove(T);
 };
 
 template <class T>
 List<T>::List() : head(0) {};
 
 template <class T>
-void List<T>::add(int a) {
+void List<T>::add(T a) {
     Link<T> *newlink, *p;
     newlink = new Link<T>(a);
     if(head == 0){
@@ -74,7 +75,7 @@ string List<T>::toString() const{
 
 
 template <class T>
-int List<T>::find(int a){
+T List<T>::find(T a){
     int cont = 0;
     Link<T> *p;
     p = head;
@@ -92,46 +93,61 @@ int List<T>::find(int a){
 }
 
 template <class T>
-void List<T>::update(int i,int a) {
-    Link<T>* p;
-    int cont;
-    if(head == 0){
-        return;
-    }
-    p = head;
-    while (p!=0){
-        if(cont == i){
-            p->value = a;
-            return;
-        }
-        p = p->next;
-        cont++;
-    }
-
+void List<T>::update(T pos,T val){
+	int i = 0;
+	Link<T> *p;
+	
+	p = head;
+	while (p != 0){
+		if (i == pos){
+			p->value = val;
+		}
+		p = p->next;
+		i++;
+	}
 }
 
 template <class T>
-int List<T>::remove(int a) {
-    Link<T> *p, *q;
-    int b,c = 0;
-    if (a==0){
-        p = head;
-        head = p->next;
-        b = p->value;
-        delete p;
-    }
-    p = head;
-    while (p!=0){
-        if (c == a){
-            b = q->value;
-            q->next = p->next;
-            delete p;
-            return b;
-        }
-        q = p;
-        p = p->next;
-        c++;
-    }
+T List<T>::remove_first(){
+	T val;
+	Link<T> *p, *q;
+	
+	p = head;
+	q = p;
+	p = p->next;
+	val = q->value;
+	head = p;
+	
+	delete q;
+	
+	return val;
+}
+
+template <class T>
+T List<T>::remove(T pos){
+	int index;
+	T val;
+	Link<T> *p, *q;
+	
+	if (pos == 0){
+		return remove_first();
+	}
+	
+	q = 0;
+	p = head;
+	index = 0;
+	while (index != pos){
+		q = p;
+		p = p->next;
+		index++;
+	}
+	
+	val = p->value;
+	q->next = p->next;
+	
+	delete p;
+	
+	return val;
 }
 
 #endif // LIST_H_INCLUDED
