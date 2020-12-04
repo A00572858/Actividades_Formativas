@@ -111,15 +111,12 @@ template <class T>
 T List<T>::remove_first(){
 	T val;
 	Link<T> *p, *q;
-	
 	p = head;
 	q = p;
 	p = p->next;
 	val = q->value;
 	head = p;
-	
 	delete q;
-	
 	return val;
 }
 
@@ -128,11 +125,9 @@ T List<T>::remove(T pos){
 	int index;
 	T val;
 	Link<T> *p, *q;
-	
 	if (pos == 0){
 		return remove_first();
 	}
-	
 	q = 0;
 	p = head;
 	index = 0;
@@ -144,9 +139,7 @@ T List<T>::remove(T pos){
 	
 	val = p->value;
 	q->next = p->next;
-	
 	delete p;
-	
 	return val;
 }
 
