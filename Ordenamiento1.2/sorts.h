@@ -1,68 +1,45 @@
-#ifndef SORTS_H_INCLUDED
-#define SORTS_H_INCLUDED
+/*
+ * sorts.h
+ * Rodrigo Muñoz Guerrero
+ * A01705674
+ */
+
+#ifndef SORTS_H_
+#define SORTS_H_
 
 #include <iostream>
-#include <string>
-#include <sstream>
 #include <vector>
-#include <cstring>
-#include <string>
 
+using namespace std;
+
+//Creación de clase tipo template que contiene los diferentes ordenamientos
 template <class T>
-class Sorts{
+class Sorts {
 private:
-	void swap(std::vector<T>&, int, int);
-	void carray(std::vector<T>&,std::vector<T>&, int, int);
-	void marray(std::vector<T>&,std::vector<T>&, int, int, int);
-	void Split(std::vector<T>&,std::vector<T>&, int, int);
+	void swap(vector<T>&, int, int);
+	void copiarArreglo(vector<T>&, vector<T>&, int, int);
+	void mergeArray(vector<T>&, vector<T>&, int, int, int);
+	void mergeSplit(vector<T>&, vector<T>&, int, int);
 public:
-    std::vector<T> ordenaSeleccion(std::vector<T>&);
-    std::vector<T> ordenaBurbuja(std::vector<T>&);
-    std::vector<T> ordenaMerge(std::vector<T>&);
-    int busqSecuencial(std::vector<T>&,int);
-    int busqBinaria(std::vector<T>&,int);
-    std::string arrayToString(const std::vector<T>&);
+ 	vector<T> ordenaSeleccion(vector<T>&);
+	vector<T> ordenaBurbuja(vector<T>&);
+	vector<T> ordenaMerge(vector<T>&);
+ 	int busqSecuencial(vector<T>&, int);
+ 	int busqBinaria(vector<T>&, int);
 };
 
+//Funcion que intercambia los valores de dos indices dados dentro de un vector
 template <class T>
-void Sorts<T>::swap(std::vector<T> &v, int i, int j){
-    int aux = v[i];
-    v[i] = v[j];
-    v[j] = aux;
+void Sorts<T>::swap(vector<T> &v, int i, int j) {
+	T aux = v[i];
+	v[i] = v[j];
+	v[j] = aux;
 }
 
+//Función que ordena un vector con el método de "burbuja"
 template <class T>
-std::vector<T> Sorts<T>::ordenaSeleccion(std::vector<T> &v){
-    int p;
-    for (int i = sizeof(v)-1;i > 0;i--){
-        p = 0;
-        for (int j=1;j<=i;j++){
-            if (v[j] > v[p]){
-                p = j;
-            }
-        }
-        if (p != i){
-            swap(v,i,p);
-        }
-    }
-    return v;
-}
-
-template <class T>
-std::string arrayToString(const std::vector<T> &v) {
-	std::stringstream aux;
-
-	aux << "[" << v[0];
-	for (int i = 1; i < v.size(); i++) {
-		aux << ", " << v[i];
-	}
-	aux << "]";
-	return aux.str();
-}
-
-template <class T>
-std::vector<T> Sorts<T>::ordenaBurbuja(std::vector<T> &v){
-    for (int i = sizeof(v) - 1; i > 0; i--) {
+vector<T> Sorts<T>::ordenaBurbuja(vector<T> &v) {
+	for (int i = v.size() - 1; i > 0; i--) {
 		for (int j = 0; j < i; j++) {
 			if (v[j] > v[j + 1]) {
 				swap(v, j, j + 1);
@@ -72,68 +49,85 @@ std::vector<T> Sorts<T>::ordenaBurbuja(std::vector<T> &v){
 	return v;
 }
 
+//Función de ordenamiento que utiliza el método de Selección
 template <class T>
-void Sorts<T>::carray(std::vector<T> &A, std::vector<T> &B, int low, int high) {
+vector<T> Sorts<T>::ordenaSeleccion(vector<T> &v) {
+	int posicion;
+	for (int i=0; i < v.size(); i++) {
+		posicion = i;
+		for (int j = i; j < v.size(); j++) {
+			if (v[j] <= v[posicion]) {
+				posicion = j;
+			}
+		}
+		if (posicion != i) {
+			swap(v, i, posicion);
+		}
+	}
+	return v;
+}
+
+//Función de ordenamiento que utiliza el método "Merge"
+template <class T>
+vector<T> Sorts<T>::ordenaMerge(vector<T> &v) {
+    vector<T> temp(v.size());
+	mergeSplit(v, temp, 0, v.size() - 1);
+	return v;
+}
+
+//Función de apoyo a la función ordenaMerge()
+template <class T>
+void Sorts<T>::mergeSplit(vector<T> &A, vector<T> &B, int low, int high) {
+	int mid;
+	if ( (high - low) < 1 ) {
+		return;
+	}
+	mid = (high + low) / 2;
+	mergeSplit(A, B, low, mid);
+	mergeSplit(A, B, mid + 1, high);
+	mergeArray(A, B, low, mid, high);
+	copiarArreglo(A, B, low, high);
+}
+
+//Función auxiliar de ordenaMerge()
+template <class T>
+void Sorts<T>::copiarArreglo(vector<T> &A, vector<T> &B, int low, int high) {
 	for (int i = low; i <= high; i++) {
 		A[i] = B[i];
 	}
 }
 
+//Función auxiliar de ordenaMerge
 template <class T>
-void Sorts<T>::marray(std::vector<T> &A, std::vector<T> &B, int low, int mid, int high) {
+void Sorts<T>::mergeArray(vector<T> &A, vector<T> &B, int low, int mid, int high) {
 	int i, j, k;
-
 	i = low;
 	j = mid + 1;
 	k = low;
-
 	while (i <= mid &&j <= high) {
-		if (A[i]<A[j]){
-			B[k]=A[i];
+		if (A[i] < A[j]) {
+			B[k] = A[i];
 			i++;
-		}
-		else{
-			B[k]=A[j];
+		} else {
+			B[k] = A[j];
 			j++;
 		}
 		k++;
 	}
-	if (i>mid){
-		for (;j<=high;j++){
-			B[k++]=A[j];
+	if (i > mid) {
+		for (; j <= high; j++) {
+			B[k++] = A[j];
 		}
 	} else {
-		for (;i<=mid;i++){
-			B[k++]=A[i];
+		for (; i <= mid; i++) {
+			B[k++] = A[i];
 		}
 	}
 }
 
+//Función de búsqueda de un número dado dentro de un vector o arrgelo de forma secuencial o iterativa
 template <class T>
-void Sorts<T>::Split(std::vector<T> &A, std::vector<T> &B, int low, int high){
-	int mid;
-
-	if ((high-low)<1){
-		return;
-	}
-	mid=(high + low)/2;
-	Split(A, B, low, mid);
-	Split(A, B, mid + 1, high);
-	marray(A, B, low, mid, high);
-	carray(A, B, low, high);
-}
-
-template <class T>
-std::vector<T> Sorts<T>::ordenaMerge(std::vector<T> &s){
-    std::vector<T> v(s);
-    std::vector<T> t(v.size());
-	Split(v, t, 0, v.size() - 1);
-	return s;
-}
-
-template <class T>
-int Sorts<T>::busqSecuencial(std::vector<T> &v, int num) {
-
+int Sorts<T>::busqSecuencial(vector<T> &v, int num) {
 	for (int i = 0; i < v.size(); i++) {
 		if (num == v[i]) {
 			return i;
@@ -142,13 +136,12 @@ int Sorts<T>::busqSecuencial(std::vector<T> &v, int num) {
 	return -1;
 }
 
+//Funcipon de búsqueda de un número dentro de un arreglo utilizando el método de arbol binario
 template <class T>
-int Sorts<T>::busqBinaria(std::vector<T> &v, int num) {
-
+int Sorts<T>::busqBinaria(vector<T> &v, int num) {
 	int mid;
 	int bot = 0;
 	int top = v.size() - 1;
-
 	while (bot < top) {
 		mid = (top + bot) / 2;
 		if (num == v[mid]) {
@@ -162,4 +155,4 @@ int Sorts<T>::busqBinaria(std::vector<T> &v, int num) {
 	return bot;
 }
 
-#endif // SORTS_H_INCLUDED
+#endif
