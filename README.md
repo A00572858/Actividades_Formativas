@@ -2,7 +2,7 @@
 
 ## Correcciones:
 ### Formativa 2.1 _Linked list_
-Daba "fail" con las funciones de _update()_ y _remove()_. Se arreglo el programa y ahora funcionan de manera correcta.
+Daba "fail" con las funciones de _update()_ y _remove()_. Se arregló el programa y ahora funcionan de manera correcta.
 
 ## Resumen
 Repositorio de _Rodrigo Muñoz Guerrero_ con matrícula _A00572858_ del ITESM campus Querétaro.\
